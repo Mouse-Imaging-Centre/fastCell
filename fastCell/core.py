@@ -15,7 +15,7 @@ class Cell:
         self.contour = contour,
 
         self.mask = np.zeros(image.shape, np.uint8)
-        cv.drawContours(self.mask, [contour], idx = 0, color = 255, thickness = -1)
+        cv.drawContours(self.mask, [contour], contourIdx = 0, color = 255, thickness = -1)
         # this would return only the indices of the cell
         # self.mask = np.transpose(np.nonzero(self.mask))
         # self.mask = cv.findNonZero(self.mask)
