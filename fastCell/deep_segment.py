@@ -1,9 +1,9 @@
 import argparse
 import tempfile
-import shutil
 import fastai.vision
 import torch
 import cv2 as cv
+import numpy as np
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Segment the cells from an image.')
@@ -24,6 +24,7 @@ args = parser.parse_args()
 l = 224
 
 if __name__ == '__main__':
+    output_dir = Path(args.output_directory)
 
     fastai.torch_core.defaults.device = torch.device('cuda') if args.use_cuda else torch.device('cpu')
     #this has to be done because of how stupidly learner() takes its arguments
@@ -45,22 +46,30 @@ if __name__ == '__main__':
 
         i_max = image.shape[0] // l
         j_max = image.shape[1] // l
+
         for i in range(i_max):
             for j in range(j_max):
-                tile = image[l * i:l * (i + 1), l * j:l * (j + 1)]
-                tile_path = temp_dir/(image_path.stem + "_i" + str(i) + "_j" + str(j) + image_path.suffix)
-                cv.imwrite(tile_path.as_posix(), tile)
+                image_tile = fastai.vision.Image(
+                    torch.tensor(image[l * i:l * (i + 1), l * j:l * (j + 1)],
+                                 dtype=torch.float32).unsqueeze(0)
+                )
+                segment_tile = learn.predict(image_tile)[0]._px.squeeze().numpy()
 
-        image_list = fastai.vision.ImageList.from_folder(temp_dir)
-        segmentations = [learn.predict(image)[0]._px.squeeze() for image in image_list]
+                if i==0 and j==0:
+                    segment = segment_tile
+                elif i==0 and j!=0:
+                    segment = np.concatenate((segment, segment_tile), axis=1)
+                elif i!=0 and j==0:
+                    row = segment_tile
+                elif i!=0 and j!=0:
+                    row = np.concatenate((row, segment_tile), axis=1)
 
-        m=0
-        for i in range(i_max):
-            for j in range(j_max):
-                segment_tile_path =  temp_dir/(image_path.stem + "_segment" +
-                                               "_i" + str(i) + "_j" + str(j) + image_path.suffix)
-                cv.imwrite(segment_tile_path.as_posix(), segmentations[m].numpy())
-                m+=1
+            #After an entire row finishes
+            if i!=0:
+                segment = np.concatenate((segment, row), axis=0)
+        segment_path = output_dir/(image_path.stem + "_segment" + image_path.suffix)
+        segment[segment == 1] = 255
+        cv.imwrite(segment_path.as_posix(), segment)
         import pdb; pdb.set_trace()
 
     print(args)
