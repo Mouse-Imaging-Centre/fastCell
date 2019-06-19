@@ -51,6 +51,16 @@ if __name__ == '__main__':
                 tile_path = temp_dir/(image_path.stem + "_i" + str(i) + "_j" + str(j) + image_path.suffix)
                 cv.imwrite(tile_path.as_posix(), tile)
 
-    # segmentations = [learn.predict(image)[0] for image in args.images]
+        image_list = fastai.vision.ImageList.from_folder(temp_dir)
+        segmentations = [learn.predict(image)[0]._px.squeeze() for image in image_list]
+
+        m=0
+        for i in range(i_max):
+            for j in range(j_max):
+                segment_tile_path =  temp_dir/(image_path.stem + "_segment" +
+                                               "_i" + str(i) + "_j" + str(j) + image_path.suffix)
+                cv.imwrite(segment_tile_path.as_posix(), segmentations[m].numpy())
+                m+=1
+        import pdb; pdb.set_trace()
 
     print(args)
