@@ -18,6 +18,7 @@ parser.add_argument("--crop-edges", dest="crop_edges", action="store_true", defa
                    help = "Crop the edges if the image is not divisible into 224*224 tiles.")
 parser.add_argument("--temp-dir", dest="temp_dir", type=str, default=None)
 parser.add_argument("--keep-temp", dest="keep_temp", action="store_true", default=False)
+parser.add_argument("--verbose", dest="verbose", action="store_true", default=False)
 
 args = parser.parse_args()
 
@@ -38,14 +39,21 @@ if __name__ == '__main__':
         temp_dir = Path(temp_object.name)
 
     for image_path in [Path(image) for image in args.images]:
+        if args.verbose:
+            print("Starting on " + image_path.as_posix())
         image = cv.imread(image_path.as_posix(), cv.COLOR_BGR2GRAY)
 
         if args.crop_edges:
+            if args.verbose:
+                print("Dimensions: " + str(image.shape[0]) + ", " + str(image.shape[1]))
             image = image[image.shape[0] % l // 2:image.shape[0] - image.shape[0] % l // 2,
                     image.shape[1] % l // 2:image.shape[1] - image.shape[1] % l // 2]
 
         i_max = image.shape[0] // l
         j_max = image.shape[1] // l
+        if args.verbose:
+            print("Segmentation window is " + str(l) + "*" + str(l))
+            print("Image has " + str(i_max) " rows and " + str(j_max) + "columns")
 
         for i in range(i_max):
             for j in range(j_max):
