@@ -53,14 +53,17 @@ if __name__ == '__main__':
         j_max = image.shape[1] // l
         if args.verbose:
             print("Segmentation window is " + str(l) + "*" + str(l))
-            print("Image has " + str(i_max) " rows and " + str(j_max) + "columns")
+            print("Image has " + str(i_max) + " rows and " + str(j_max) + " columns")
 
         for i in range(i_max):
             for j in range(j_max):
-                image_tile = fastai.vision.Image(
-                    torch.tensor(image[l * i:l * (i + 1), l * j:l * (j + 1)],
-                                 dtype=torch.float32).unsqueeze(0)
-                )
+
+                # this is annoying, but a low-risk way to get fastai to read the image properly
+                image_tile = image[l * i:l * (i + 1), l * j:l * (j + 1)]
+                image_tile_path = temp_dir / (image_path.stem + "_i" + str(i) + "_j" + str(j) + image_path.suffix)
+                cv.imwrite(image_tile_path.as_posix(), image_tile)
+                image_tile = fastai.vision.open_image(image_tile_path.as_posix())
+
                 segment_tile = learn.predict(image_tile)[0]._px.squeeze().numpy()
 
                 if i==0 and j==0:
@@ -78,6 +81,3 @@ if __name__ == '__main__':
         segment_path = output_dir/(image_path.stem + "_segment" + image_path.suffix)
         segment[segment == 1] = 255
         cv.imwrite(segment_path.as_posix(), segment)
-        import pdb; pdb.set_trace()
-
-    print(args)
