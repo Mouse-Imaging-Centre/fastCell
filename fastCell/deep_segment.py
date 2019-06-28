@@ -53,10 +53,12 @@ if __name__ == '__main__':
         j_max = image.shape[1] // l
         if args.verbose:
             print("Segmentation window is " + str(l) + "*" + str(l))
-            print("Image has " + str(i_max) + " rows and " + str(j_max) + " columns")
+            print("Image has " + str(i_max) + " rows and " + str(j_max) + " columns of image tiles.")
 
         for i in range(i_max):
             for j in range(j_max):
+                if args.verbose:
+                    print("Working on tile in row:" + str(i+1) + ", column:" + str(j+1) + ".")
 
                 # this is annoying, but a low-risk way to get fastai to read the image properly
                 image_tile = image[l * i:l * (i + 1), l * j:l * (j + 1)]
