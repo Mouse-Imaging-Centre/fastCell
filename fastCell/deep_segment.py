@@ -11,7 +11,8 @@ parser.add_argument("--image", dest="image", type=str, required=True,
                     help = "Image to segment")
 parser.add_argument("--learner", dest="learner", type=str, required=True,
                    help = "Load the Learner object that was saved from export().")
-parser.add_argument("--segment-output", dest="segment_output", type=str, required=True,)
+parser.add_argument("--segment-output", dest="segment_output", type=str, required=True)
+
 parser.add_argument("--use-cuda", dest="use_cuda", action="store_true", default=False,
                    help = "Load the Learner object on the gpu instead of the cpu.")
 parser.add_argument("--crop-edges", dest="crop_edges", action="store_true", default=True,
