@@ -93,6 +93,7 @@ if __name__ == '__main__':
         area = lambda df: df.contour.apply(lambda contour: cv.contourArea(contour)),
         perimeter = lambda df: df.contour.apply(lambda contour: cv.arcLength(contour, closed=True))
     )
+    #TODO instead of hardcoding this, allow the user many post-processing options
     df = df[df.area > 15]
     df = df.assign(
         centroid = lambda df: df.moments.apply(lambda moments:
@@ -101,6 +102,7 @@ if __name__ == '__main__':
                                                )
     )
 
+    #Write outputs
     if args.segment_output:
         segment = np.zeros(image.shape, np.uint8)
         cv.drawContours(image=segment,
