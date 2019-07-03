@@ -4,6 +4,7 @@ import fastai.vision
 import torch
 import cv2 as cv
 import numpy as np
+import pandas as pd
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Segment the cells from an image.')
@@ -11,7 +12,8 @@ parser.add_argument("--image", dest="image", type=str, required=True,
                     help = "Image to segment")
 parser.add_argument("--learner", dest="learner", type=str, required=True,
                    help = "Load the Learner object that was saved from export().")
-parser.add_argument("--segment-output", dest="segment_output", type=str, required=True)
+parser.add_argument("--segment-output", dest="segment_output", type=str, required=False,
+                    help="Write out the segmentation.")
 parser.add_argument("--image-output", dest="image_output", type=str, required=False,
                     help = "Write out the image. It may have been cropped or otherwise processed.")
 parser.add_argument("--use-cuda", dest="use_cuda", action="store_true", default=False,
@@ -80,10 +82,31 @@ if __name__ == '__main__':
         if i!=0:
             segment = np.concatenate((segment, row), axis=0)
 
-    if args.segment_intensity != 1:
-        segment[segment == 1] = args.segment_intensity
+    #Post-process
+    contours, hierarchy = cv.findContours(segment.astype("uint8"), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+    #cv.findContours returns a list of np.ndarray of shape [px, unknown, 2].
+    contours = [np.squeeze(contour,axis=1) for contour in contours]
+    df = pd.DataFrame({'contour': contours}).assign(
+        moments = lambda df: df.contour.apply(lambda contour: cv.moments(contour)),
+        area = lambda df: df.contour.apply(lambda contour: cv.contourArea(contour)),
+        perimeter = lambda df: df.contour.apply(lambda contour: cv.arcLength(contour, closed=True))
+    )
+    df = df[df.area > 15]
+    df = df.assign(
+        centroid = lambda df: df.moments.apply(lambda moments:
+                                              (int(moments['m10'] / moments['m00']),
+                                               int(moments['m01'] / moments['m00']))
+                                               )
+    )
 
-    cv.imwrite(args.segment_output, segment)
+    if args.segment_output:
+        segment = np.zeros(image.shape, np.uint8)
+        cv.drawContours(image=segment,
+                        contours=df.contour.tolist(),
+                        contourIdx=-1, #negative value means draw all contours
+                        color=args.segment_intensity,
+                        thickness=-1) #negative value means fill it in
+        cv.imwrite(args.segment_output, segment)
 
     if args.image_output:
         cv.imwrite(args.image_output, image)
