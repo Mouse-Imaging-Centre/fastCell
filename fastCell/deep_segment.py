@@ -21,6 +21,7 @@ parser.add_argument("--crop-edges", dest="crop_edges", action="store_true", defa
 parser.add_argument("--temp-dir", dest="temp_dir", type=str, default=None)
 parser.add_argument("--keep-temp", dest="keep_temp", action="store_true", default=False)
 parser.add_argument("--verbose", dest="verbose", action="store_true", default=False)
+parser.add_argument("--segment-intensity", dest="segment_intensity", type=int, default=255)
 
 args = parser.parse_args()
 
@@ -78,7 +79,10 @@ if __name__ == '__main__':
         #After an entire row finishes
         if i!=0:
             segment = np.concatenate((segment, row), axis=0)
-    segment[segment == 1] = 255
+
+    if args.segment_intensity != 1:
+        segment[segment == 1] = args.segment_intensity
+
     cv.imwrite(args.segment_output, segment)
 
     if args.image_output:
