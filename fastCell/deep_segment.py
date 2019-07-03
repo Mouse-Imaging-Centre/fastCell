@@ -14,6 +14,8 @@ parser.add_argument("--learner", dest="learner", type=str, required=True,
                    help = "Load the Learner object that was saved from export().")
 parser.add_argument("--segment-output", dest="segment_output", type=str, required=False,
                     help="Write out the segmentation.")
+parser.add_argument("--centroids-output", dest="centroids_output", type=str, required=False,
+                    help="Write out each cell as pixel.")
 parser.add_argument("--outlines-output", dest="outlines_output", type=str, required=False,
                     help="Outline the identified cells.")
 parser.add_argument("--image-output", dest="image_output", type=str, required=False,
@@ -111,6 +113,16 @@ if __name__ == '__main__':
                         color=args.segment_intensity,
                         thickness=-1) #negative value means fill it in
         cv.imwrite(args.segment_output, segment)
+
+    if args.centroids_output:
+        centroids = np.zeros(image.shape, np.uint8)
+        for centroid in df.centroid:
+            cv.circle(img=centroids,
+                      center=centroid,
+                      radius=0,
+                      color=args.segment_intensity,
+                      thickness=1)
+        cv.imwrite(args.centroids_output, centroids)
 
     if args.outlines_output:
         outlines = cv.cvtColor(image, cv.COLOR_GRAY2RGB)
