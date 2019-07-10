@@ -20,5 +20,6 @@ setuptools.setup(
     ],
     scripts=[
         'fastCell/deep_segment.py',
+        'fastCell/pixelize_segment.py'
     ]
 )
