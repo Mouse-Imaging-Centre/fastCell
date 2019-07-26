@@ -91,7 +91,7 @@ if __name__ == '__main__':
         # cv.findContours returns a list of np.ndarray of shape [px, unknown, 2].
         contours, hierarchy = cv.findContours(segment.astype("uint8"), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
     elif re.match("^3.4", cv.__version__):
-        contours, hierarchy, _ = cv.findContours(segment.astype("uint8"), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+        image, contours, hierarchy = cv.findContours(segment.astype("uint8"), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
     contours = [np.squeeze(contour,axis=1) for contour in contours]
     df = pd.DataFrame({'contour': contours}).assign(
         moments = lambda df: df.contour.apply(lambda contour: cv.moments(contour)),
