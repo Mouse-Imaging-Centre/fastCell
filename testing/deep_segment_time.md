@@ -1,3 +1,5 @@
+## RESNET50 on mouse32 runtimes
+```
 $ identify /hpf/largeprojects/MICe/nwang/TissueVision/2019-02-29_Mallar/nuclei_8brains_stitched/1.2/1.2_Z0130.tif
 /hpf/largeprojects/MICe/nwang/TissueVision/2019-02-29_Mallar/nuclei_8brains_stitched/1.2/1.2_Z0130.tif TIFF 9793x8585 9793x8585+0+0 8-bit Grayscale Gray 33.39MB 0.000u 0:00.000
 $ /usr/bin/time -v deep_segment.py --learner /hpf/largeprojects/MICe/nwang/tools/fastai/2019-07-01_RESNET50_IOU0.69.pkl --image /hpf/largeprojects/MICe/nwang/TissueVision/2019-02-29_Mallar/nuclei_8brains_stitched/1.2/1.2_Z0130.tif --segment-output 1.2_Z0130_segment.tif --outlines-output 1.2_Z0130_outlines.tif --centroids-output 1.2_Z0130_centroids.tif --image-output 1.2_Z0130_image.tif
@@ -78,3 +80,38 @@ $ /usr/bin/time -v deep_segment.py --learner /hpf/largeprojects/MICe/nwang/tools
 	Signals delivered: 0
 	Page size (bytes): 4096
 	Exit status: 0
+```
+## RESNET34 on Graham (ComputeCanada) runtimes
+```
+$ cat deep_segment_job.sh
+#!/bin/bash
+#SBATCH --account=def-jlerch
+#SBATCH --time=2:00:00
+#SBATCH --mem=8G
+#SBATCH --cpus-per-task=2
+time -v deep_segment.py --verbose --segment-intensity 1 --temp-dir temp --learner ~/tools/2019-07-24_RESNET34_IOU0.69_stage2.pkl --image TV_recon_test_stitched/447.3/447.3_Z0007.tif --image-output TV_recon_test_deep_segmentation/447.3/447.3_Z0007_cropped.tiff --centroids-output TV_recon_test_deep_segmentation/447.3/447.3_Z0007_count.tiff
+$ sbatch deep_segment_job.sh
+    Command being timed: "deep_segment.py --verbose --segment-intensity 1 --temp-dir temp --learner /home/nzxwang/tools/2019-07-24_RESNET34_IOU0.69_stage2.pkl --image TV_recon_test_stitched/447.3/447.3_Z0007.tif --image-output TV_recon_test_deep_segmentation/447.3/447.3_Z0007_cropped.tiff --centroids-output TV_recon_test_deep_segmentation/447.3/447.3_Z0007_count.tiff"
+    User time (seconds): 1807.57
+    System time (seconds): 93.11
+    Percent of CPU this job got: 185%
+    Elapsed (wall clock) time (h:mm:ss or m:ss): 17:02.17
+    Average shared text size (kbytes): 0
+    Average unshared data size (kbytes): 0
+    Average stack size (kbytes): 0
+    Average total size (kbytes): 0
+    Maximum resident set size (kbytes): 1690700
+    Average resident set size (kbytes): 0
+    Major (requiring I/O) page faults: 982
+    Minor (reclaiming a frame) page faults: 7831709
+    Voluntary context switches: 32982
+    Involuntary context switches: 134996
+    Swaps: 0
+    File system inputs: 1485584
+    File system outputs: 138296
+    Socket messages sent: 0
+    Socket messages received: 0
+    Signals delivered: 0
+    Page size (bytes): 4096
+    Exit status: 0
+```
