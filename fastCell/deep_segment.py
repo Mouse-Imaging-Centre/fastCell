@@ -5,7 +5,9 @@ import torch
 import cv2 as cv
 import numpy as np
 import pandas as pd
+
 from pathlib import Path
+from fastCell.Hcolumns import *
 
 parser = argparse.ArgumentParser(description='Segment the cells from an image.')
 parser.add_argument("--image", dest="image", type=str, required=True,
