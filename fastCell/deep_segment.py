@@ -31,7 +31,26 @@ parser.add_argument("--keep-temp", dest="keep_temp", action="store_true", defaul
 parser.add_argument("--verbose", dest="verbose", action="store_true", default=False)
 parser.add_argument("--segment-intensity", dest="segment_intensity", type=int, default=255)
 
+parser.add_argument("--process-clusters", dest="process_clusters", type=bool, default=False,
+                    help = """
+                    Individual cells that aren't touching are processed by being reduced to
+                    a single point at their centroid. Clusters of cells area identified by the
+                    maximum area criterium specified by --cell-max-area. The number of cells 
+                    contained in the cluster is found by dividing the cluster's total area by 
+                    the mean area criterium specified by --cell-mean-area. That many cell centroids
+                    are randomly and uniformly sampled inside the cluster. Note that this will not
+                    work out of the box. Your neural network provided to --learner must be trained
+                    to recognize clusters of cells in addition to individual cells.
+                    """)
+parser.add_argument("--cell-max-area", dest="cell_max_area", type=int, default=None,
+                    help = "This is only used by --process-clusters")
+parser.add_argument("--cell-mean-area", dest="cell_mean_area", type=int, default=None,
+                    help = "This is only used by --process-clusters")
+
 args = parser.parse_args()
+
+if (args.process_clusters and not (args.cell_max_area and args.cell_mean_area)):
+    parser.error("to --process-clusters, I need to know the --cell-max-area and --cell-mean-area")
 
 l = 224
 
