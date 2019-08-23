@@ -5,6 +5,7 @@ import torch
 import cv2 as cv
 import numpy as np
 import pandas as pd
+from fastCell.core import random_cells
 
 from pathlib import Path
 from fastCell.Hcolumns import *
@@ -129,12 +130,20 @@ if __name__ == '__main__':
 
     df = df[df.area > args.cell_min_area]
 
-    df = df.assign(
-        centroid = lambda df: df.moments.apply(lambda moments:
-                                              (int(moments['m10'] / moments['m00']),
-                                               int(moments['m01'] / moments['m00']))
-                                               )
-    )
+    if args.process_clusters:
+        df["centroid"] = df.apply(
+            lambda row: random_cells(row.contour, args.cell_mean_area) if row.area > args.cell_max_area else
+            [(int(row.moments['m10'] / row.moments['m00']), int(row.moments['m01'] / row.moments['m00']))],
+            axis = 1
+        )
+        df = df.explode("centroid")
+    else:
+        df = df.assign(
+            centroid = lambda df: df.moments.apply(lambda moments:
+                                                  (int(moments['m10'] / moments['m00']),
+                                                   int(moments['m01'] / moments['m00']))
+                                                   )
+        )
 
     #Write outputs
     if args.segment_output:
