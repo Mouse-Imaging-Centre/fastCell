@@ -81,6 +81,7 @@ if __name__ == '__main__':
         print("Segmentation window is " + str(l) + "*" + str(l))
         print("Image has " + str(i_max) + " rows and " + str(j_max) + " columns of image tiles.")
 
+    #Segment each tile
     for i in range(i_max):
         for j in range(j_max):
             if args.verbose:
