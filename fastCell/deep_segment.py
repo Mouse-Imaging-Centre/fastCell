@@ -26,6 +26,12 @@ parser.add_argument("--use-cuda", dest="use_cuda", action="store_true", default=
                    help = "Load the Learner object on the gpu instead of the cpu.")
 parser.add_argument("--crop-edges", dest="crop_edges", action="store_true", default=True,
                    help = "Crop the edges if the image is not divisible into 224*224 tiles.")
+parser.add_argument("--cell-min-area", dest="cell_min_area", type=int, default=15,
+                   help = """
+                   The neural network provided to --learner may mistakenly segment
+                   stray pixels as cells. All segmented cells with area less than the
+                   value specified by --cell-min-area will be ignored.
+                   """)
 parser.add_argument("--temp-dir", dest="temp_dir", type=str, default=None)
 parser.add_argument("--keep-temp", dest="keep_temp", action="store_true", default=False)
 parser.add_argument("--verbose", dest="verbose", action="store_true", default=False)
@@ -120,8 +126,9 @@ if __name__ == '__main__':
         area = lambda df: df.contour.apply(lambda contour: cv.contourArea(contour)),
         perimeter = lambda df: df.contour.apply(lambda contour: cv.arcLength(contour, closed=True))
     )
-    #TODO instead of hardcoding this, allow the user many post-processing options
-    df = df[df.area > 15]
+
+    df = df[df.area > args.cell_min_area]
+
     df = df.assign(
         centroid = lambda df: df.moments.apply(lambda moments:
                                               (int(moments['m10'] / moments['m00']),
