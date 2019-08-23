@@ -24,5 +24,6 @@ setuptools.setup(
     ],
     install_requires=[
         'opencv-python==4.1,==3.4'
+        'pandas>=0.25'
     ]
 )
