@@ -38,7 +38,7 @@ parser.add_argument("--keep-temp", dest="keep_temp", action="store_true", defaul
 parser.add_argument("--verbose", dest="verbose", action="store_true", default=False)
 parser.add_argument("--segment-intensity", dest="segment_intensity", type=int, default=255)
 
-parser.add_argument("--process-clusters", dest="process_clusters", type=bool, default=False,
+parser.add_argument("--process-clusters", dest="process_clusters", action="store_true", default=False,
                     help = """
                     Individual cells that aren't touching are processed by being reduced to
                     a single point at their centroid. Clusters of cells area identified by the
