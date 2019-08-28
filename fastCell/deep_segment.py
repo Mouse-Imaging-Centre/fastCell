@@ -51,7 +51,7 @@ parser.add_argument("--process-clusters", dest="process_clusters", action="store
                     """)
 parser.add_argument("--cell-max-area", dest="cell_max_area", type=int, default=None,
                     help = "This is only used by --process-clusters")
-parser.add_argument("--cell-mean-area", dest="cell_mean_area", type=int, default=None,
+parser.add_argument("--cell-mean-area", dest="cell_mean_area", type=float, default=None,
                     help = "This is only used by --process-clusters")
 
 args = parser.parse_args()
