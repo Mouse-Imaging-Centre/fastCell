@@ -122,6 +122,7 @@ if __name__ == '__main__':
     elif re.match("^3.4", cv.__version__):
         image, contours, hierarchy = cv.findContours(segment.astype("uint8"), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
     contours = [np.squeeze(contour,axis=1) for contour in contours]
+
     df = pd.DataFrame({'contour': contours}).assign(
         moments = lambda df: df.contour.apply(lambda contour: cv.moments(contour)),
         area = lambda df: df.contour.apply(lambda contour: cv.contourArea(contour)),
@@ -130,20 +131,23 @@ if __name__ == '__main__':
 
     df = df[df.area > args.cell_min_area]
 
-    if args.process_clusters:
-        df["centroid"] = df.apply(
-            lambda row: random_cells(row.contour, args.cell_mean_area) if row.area > args.cell_max_area else
-            [(int(row.moments['m10'] / row.moments['m00']), int(row.moments['m01'] / row.moments['m00']))],
-            axis = 1
-        )
-        df = df.explode("centroid")
+    if df.empty:
+        df["centroid"] = None
     else:
-        df = df.assign(
-            centroid = lambda df: df.moments.apply(lambda moments:
-                                                  (int(moments['m10'] / moments['m00']),
-                                                   int(moments['m01'] / moments['m00']))
-                                                   )
-        )
+        if args.process_clusters:
+            df["centroid"] = df.apply(
+                lambda row: random_cells(row.contour, args.cell_mean_area) if row.area > args.cell_max_area else
+                [(int(row.moments['m10'] / row.moments['m00']), int(row.moments['m01'] / row.moments['m00']))],
+                axis = 1
+            )
+            df = df.explode("centroid")
+        else:
+            df = df.assign(
+                centroid = lambda df: df.moments.apply(lambda moments:
+                                                      (int(moments['m10'] / moments['m00']),
+                                                       int(moments['m01'] / moments['m00']))
+                                                       )
+            )
 
     #Write outputs
     if args.segment_output:
