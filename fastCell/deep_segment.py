@@ -33,7 +33,8 @@ parser.add_argument("--cell-min-area", dest="cell_min_area", type=int, default=1
                    stray pixels as cells. All segmented cells with area less than the
                    value specified by --cell-min-area will be ignored.
                    """)
-parser.add_argument("--temp-dir", dest="temp_dir", type=str, default=None)
+parser.add_argument("--temp-dir", dest="temp_dir", type=str, default=None,
+                    help="Please do not use any parent directory notation like .. on UNIX systems.")
 parser.add_argument("--keep-temp", dest="keep_temp", action="store_true", default=False)
 parser.add_argument("--verbose", dest="verbose", action="store_true", default=False)
 parser.add_argument("--segment-intensity", dest="segment_intensity", type=int, default=255)
@@ -67,6 +68,7 @@ if __name__ == '__main__':
     learner_path = Path(args.learner)
     learn = fastai.basic_train.load_learner(path = learner_path.parent, file = learner_path.name)
 
+    os.makedirs(args.temp_dir, exist_ok=True)
     if args.keep_temp:
         temp_dir = Path(tempfile.mkdtemp(dir=args.temp_dir))
     else:
