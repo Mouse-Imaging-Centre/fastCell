@@ -52,10 +52,12 @@ cluster_group.add_argument("--cell-mean-area", dest="cell_mean_area", type=float
 output_group = parser.add_argument_group("Outputs")
 output_group.add_argument("--segment-output", dest="segment_output", type=str, required=False,
                     help="Write out the segmentation.")
-output_group.add_argument("--segment-intensity", dest="segment_intensity", type=int, default=255)
+output_group.add_argument("--segment-intensity", dest="segment_intensity", type=int, default=255,
+                          help = "default: %(default)s")
 output_group.add_argument("--centroids-output", dest="centroids_output", type=str, required=False,
                     help="Write out each cell as pixel.")
-output_group.add_argument("--centroid-intensity", dest="centroid_intensity", type=int, default=1)
+output_group.add_argument("--centroid-intensity", dest="centroid_intensity", type=int, default=1,
+                          help = "default: %(default)s")
 output_group.add_argument("--outlines-output", dest="outlines_output", type=str, required=False,
                     help="Outline the identified cells.")
 output_group.add_argument("--image-output", dest="image_output", type=str, required=False,
