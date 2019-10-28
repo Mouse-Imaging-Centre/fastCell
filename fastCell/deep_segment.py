@@ -15,14 +15,7 @@ parser.add_argument("--image", dest="image", type=str, required=True,
                     help = "Image to segment")
 parser.add_argument("--learner", dest="learner", type=str, required=True,
                    help = "Load the Learner object that was saved from export().")
-parser.add_argument("--segment-output", dest="segment_output", type=str, required=False,
-                    help="Write out the segmentation.")
-parser.add_argument("--centroids-output", dest="centroids_output", type=str, required=False,
-                    help="Write out each cell as pixel.")
-parser.add_argument("--outlines-output", dest="outlines_output", type=str, required=False,
-                    help="Outline the identified cells.")
-parser.add_argument("--image-output", dest="image_output", type=str, required=False,
-                    help = "Write out the image. It may have been cropped or otherwise processed.")
+
 parser.add_argument("--use-cuda", dest="use_cuda", action="store_true", default=False,
                    help = "Load the Learner object on the gpu instead of the cpu.")
 parser.add_argument("--crop-edges", dest="crop_edges", action="store_true", default=True,
@@ -39,7 +32,8 @@ parser.add_argument("--keep-temp", dest="keep_temp", action="store_true", defaul
 parser.add_argument("--verbose", dest="verbose", action="store_true", default=False)
 parser.add_argument("--segment-intensity", dest="segment_intensity", type=int, default=255)
 
-parser.add_argument("--process-clusters", dest="process_clusters", action="store_true", default=False,
+cluster_group = parser.add_argument_group("Cluster Processing")
+cluster_group.add_argument("--process-clusters", dest="process_clusters", action="store_true", default=False,
                     help = """
                     Individual cells that aren't touching are processed by being reduced to
                     a single point at their centroid. Clusters of cells area identified by the
@@ -50,11 +44,20 @@ parser.add_argument("--process-clusters", dest="process_clusters", action="store
                     work out of the box. Your neural network provided to --learner must be trained
                     to recognize clusters of cells in addition to individual cells.
                     """)
-parser.add_argument("--cell-max-area", dest="cell_max_area", type=int, default=None,
+cluster_group.add_argument("--cell-max-area", dest="cell_max_area", type=int, default=None,
                     help = "This is only used by --process-clusters")
-parser.add_argument("--cell-mean-area", dest="cell_mean_area", type=float, default=None,
+cluster_group.add_argument("--cell-mean-area", dest="cell_mean_area", type=float, default=None,
                     help = "This is only used by --process-clusters")
 
+output_group = parser.add_argument_group("Outputs")
+output_group.add_argument("--segment-output", dest="segment_output", type=str, required=False,
+                    help="Write out the segmentation.")
+output_group.add_argument("--centroids-output", dest="centroids_output", type=str, required=False,
+                    help="Write out each cell as pixel.")
+output_group.add_argument("--outlines-output", dest="outlines_output", type=str, required=False,
+                    help="Outline the identified cells.")
+output_group.add_argument("--image-output", dest="image_output", type=str, required=False,
+                    help = "Write out the image. It may have been cropped or otherwise processed.")
 args = parser.parse_args()
 
 if (args.process_clusters and not (args.cell_max_area and args.cell_mean_area)):
