@@ -30,7 +30,7 @@ parser.add_argument("--temp-dir", dest="temp_dir", type=str, default=None,
                     help="Please do not use any parent directory notation like .. on UNIX systems.")
 parser.add_argument("--keep-temp", dest="keep_temp", action="store_true", default=False)
 parser.add_argument("--verbose", dest="verbose", action="store_true", default=False)
-parser.add_argument("--segment-intensity", dest="segment_intensity", type=int, default=255)
+
 
 cluster_group = parser.add_argument_group("Cluster Processing")
 cluster_group.add_argument("--process-clusters", dest="process_clusters", action="store_true", default=False,
@@ -52,8 +52,10 @@ cluster_group.add_argument("--cell-mean-area", dest="cell_mean_area", type=float
 output_group = parser.add_argument_group("Outputs")
 output_group.add_argument("--segment-output", dest="segment_output", type=str, required=False,
                     help="Write out the segmentation.")
+output_group.add_argument("--segment-intensity", dest="segment_intensity", type=int, default=255)
 output_group.add_argument("--centroids-output", dest="centroids_output", type=str, required=False,
                     help="Write out each cell as pixel.")
+output_group.add_argument("--centroid-intensity", dest="centroid_intensity", type=int, default=1)
 output_group.add_argument("--outlines-output", dest="outlines_output", type=str, required=False,
                     help="Outline the identified cells.")
 output_group.add_argument("--image-output", dest="image_output", type=str, required=False,
@@ -170,7 +172,7 @@ if __name__ == '__main__':
             cv.circle(img=centroids,
                       center=centroid,
                       radius=0,
-                      color=args.segment_intensity,
+                      color=args.centroid_intensity,
                       thickness=1)
         cv.imwrite(args.centroids_output, centroids)
 
