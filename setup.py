@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="fastCell",
-    version="0.0.1",
+    version="1.0.0",
     author="Nick Wang",
     author_email="nick.wang@mail.mcgill.ca",
     description="Fast Deep Neural Networks for Cell Image Analysis",
