@@ -24,7 +24,7 @@ setuptools.setup(
         'fastCell/pixelize_segment.py'
     ],
     install_requires=[
-        'opencv-python==4.1.0',
+        'opencv-python==4.1.0.25',
         'pandas>=0.25',
         'fastai>=1.0.53'
     ]
