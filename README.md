@@ -9,6 +9,12 @@ Dr. Dulcie Vousden originally published results using CellProfiler in her paper 
 **NB:** fastCell is built on [fastai](https://github.com/fastai/fastai) which also requires a specific version of [PyTorch](https://github.com/pytorch/pytorch) that may differ depending on your system. As such, it is highly recommended that the user **first installs `fastai-1.0.5x` and its dependencies, then fastCell into a [virtual environment](https://docs.python.org/3.7/tutorial/venv.html)**.
 
 ## Developer Install
+Python's setuptools [doesn't work with opencv-python](https://github.com/skvark/opencv-python/issues/47#issuecomment-332830074), so install it with pip first. 
+```bash
+pip install opencv-python==4.1.0.25
+```
+
+After installing fastai and opencv-python, install fastCell.
 ```bash
 git clone https://github.com/Mouse-Imaging-Centre/fastCell.git
 cd fastCell
