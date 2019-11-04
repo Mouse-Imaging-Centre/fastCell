@@ -125,11 +125,8 @@ if __name__ == '__main__':
             segment = np.concatenate((segment, row), axis=0)
 
     #Post-process
-    if re.match("^4.1", cv.__version__):
-        # cv.findContours returns a list of np.ndarray of shape [px, unknown, 2].
-        contours, hierarchy = cv.findContours(segment.astype("uint8"), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
-    elif re.match("^3.4", cv.__version__):
-        image, contours, hierarchy = cv.findContours(segment.astype("uint8"), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+    # cv.findContours returns a list of np.ndarray of shape [px, unknown, 2].
+    contours, hierarchy = cv.findContours(segment.astype("uint8"), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
     contours = [np.squeeze(contour,axis=1) for contour in contours]
 
     df = pd.DataFrame({'contour': contours}).assign(
