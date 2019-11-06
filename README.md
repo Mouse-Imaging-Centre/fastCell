@@ -22,3 +22,12 @@ git clone https://github.com/Mouse-Imaging-Centre/fastCell.git
 cd fastCell
 python3 setup.py develop
 ```
+
+# Installation Issues
+If you encounter problems with pip, please make sure you have the latest pip:
+
+`pip3 install --upgrade pip`
+
+For all fastai related issues, please follow [their instructions](https://github.com/fastai/fastai#installation-issues).
+
+If you are trying to _install_ fastCell on ComputeCanada's Graham or Cedar clusters, you don't need to as they are already installed. If you truly want your own installation on Graham/Cedar, comment out the opencv-python dependency from setup.py  and load the system's `opencv/4.1.0` module. ComputeCanada has crippled its pip to ignore binary "manylinux" wheels as they typically do not work or underperform so they typically build python wheels from source or install it witrh a module when it's not practical. The crippling file is `/cvmfs/soft.computecanada.ca/custom/python/site-packages/_manylinux.py`
