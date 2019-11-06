@@ -13,7 +13,7 @@ As such, it is highly recommended that you **first [install fastai](https://docs
 ## Developer Install
 Python's setuptools [doesn't work with opencv-python](https://github.com/skvark/opencv-python/issues/47#issuecomment-332830074), so install it with pip first. 
 ```bash
-pip install opencv-python==4.1.0.25
+pip3 install opencv-python==4.1.0.25
 ```
 
 After installing fastai and opencv-python, install fastCell.
