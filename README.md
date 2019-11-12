@@ -20,7 +20,7 @@ After installing fastai and opencv-python, install fastCell.
 ```bash
 git clone https://github.com/Mouse-Imaging-Centre/fastCell.git
 cd fastCell
-python3 setup.py develop
+python3 setup.py install
 ```
 
 # Installation Issues
