@@ -109,7 +109,7 @@ if __name__ == '__main__':
             cv.imwrite(image_tile_path.as_posix(), image_tile)
             image_tile = fastai.vision.open_image(image_tile_path.as_posix())
 
-            segment_tile = learn.predict(image_tile)[0]._px.squeeze().numpy()
+            segment_tile = learn.predict(image_tile)[0].data.squeeze().numpy()
 
             if i==0 and j==0:
                 segment = segment_tile
