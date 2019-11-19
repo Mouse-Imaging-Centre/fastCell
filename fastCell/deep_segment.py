@@ -107,7 +107,7 @@ if __name__ == '__main__':
             image_tile = image[l * i:l * (i + 1), l * j:l * (j + 1)]
             image_tile_path = temp_dir / (image_path.stem + "_i" + str(i) + "_j" + str(j) + image_path.suffix)
             cv.imwrite(image_tile_path.as_posix(), image_tile)
-            image_tile = fastai.vision.open_image(image_tile_path.as_posix())
+            image_tile = fastai.vision.open_image(image_tile_path)
 
             segment_tile = learn.predict(image_tile)[0].data.squeeze().numpy()
 
