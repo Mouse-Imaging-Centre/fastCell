@@ -26,6 +26,6 @@ setuptools.setup(
     install_requires=[
         'opencv-python==4.1.0.25',
         'pandas>=0.25',
-        'fastai>=1.0.53'
+        'fastai>=1.0.57'
     ]
 )
