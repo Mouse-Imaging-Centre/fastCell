@@ -9,63 +9,16 @@ from fastCell.core import random_cells
 
 from pathlib import Path
 from fastCell.Hcolumns import *
+from fastCell.core import add_default_groups, parse_and_validate
+from fastCell.preprocessing import add_preprocessing_group
+from fastCell.segmentation import add_segmentation_group
+from fastCell.postprocessing import add_postprocessing_group, validate_postprocessing_args
 
-parser = argparse.ArgumentParser(description='Segment the cells from an image.')
-parser.add_argument("--image", dest="image", type=str, required=True,
-                    help = "Image to segment")
-parser.add_argument("--learner", dest="learner", type=str, required=True,
-                   help = "Load the Learner object that was saved from export().")
+parser = argparse.ArgumentParser(description = 'Segment the cells from an image.')
+for add_group in [add_default_groups, add_preprocessing_group, add_segmentation_group, add_postprocessing_group]:
+    add_group(parser)
 
-parser.add_argument("--use-cuda", dest="use_cuda", action="store_true", default=False,
-                   help = "Load the Learner object on the gpu instead of the cpu.")
-parser.add_argument("--crop-edges", dest="crop_edges", action="store_true", default=True,
-                   help = "Crop the edges if the image is not divisible into 224*224 tiles.")
-parser.add_argument("--cell-min-area", dest="cell_min_area", type=int, default=15,
-                   help = """
-                   The neural network provided to --learner may mistakenly segment
-                   stray pixels as cells. All segmented cells with area less than the
-                   value specified by --cell-min-area will be ignored.
-                   """)
-parser.add_argument("--temp-dir", dest="temp_dir", type=str, default=None,
-                    help="Please do not use any parent directory notation like .. on UNIX systems.")
-parser.add_argument("--keep-temp", dest="keep_temp", action="store_true", default=False)
-parser.add_argument("--verbose", dest="verbose", action="store_true", default=False)
-
-
-cluster_group = parser.add_argument_group("Cluster Processing")
-cluster_group.add_argument("--process-clusters", dest="process_clusters", action="store_true", default=False,
-                    help = """
-                    Individual cells that aren't touching are processed by being reduced to
-                    a single point at their centroid. Clusters of cells area identified by the
-                    maximum area criterium specified by --cell-max-area. The number of cells 
-                    contained in the cluster is found by dividing the cluster's total area by 
-                    the mean area criterium specified by --cell-mean-area. That many cell centroids
-                    are randomly and uniformly sampled inside the cluster. Note that this will not
-                    work out of the box. Your neural network provided to --learner must be trained
-                    to recognize clusters of cells in addition to individual cells.
-                    """)
-cluster_group.add_argument("--cell-max-area", dest="cell_max_area", type=int, default=None,
-                    help = "This is only used by --process-clusters")
-cluster_group.add_argument("--cell-mean-area", dest="cell_mean_area", type=float, default=None,
-                    help = "This is only used by --process-clusters")
-
-output_group = parser.add_argument_group("Outputs")
-output_group.add_argument("--segment-output", dest="segment_output", type=str, required=False,
-                    help="Write out the segmentation.")
-output_group.add_argument("--segment-intensity", dest="segment_intensity", type=int, default=255,
-                          help = "default: %(default)s")
-output_group.add_argument("--centroids-output", dest="centroids_output", type=str, required=False,
-                    help="Write out each cell as pixel.")
-output_group.add_argument("--centroid-intensity", dest="centroid_intensity", type=int, default=1,
-                          help = "default: %(default)s")
-output_group.add_argument("--outlines-output", dest="outlines_output", type=str, required=False,
-                    help="Outline the identified cells.")
-output_group.add_argument("--image-output", dest="image_output", type=str, required=False,
-                    help = "Write out the image. It may have been cropped or otherwise processed.")
-args = parser.parse_args()
-
-if (args.process_clusters and not (args.cell_max_area and args.cell_mean_area)):
-    parser.error("to --process-clusters, I need to know the --cell-max-area and --cell-mean-area")
+args = parse_and_validate(parser, [validate_postprocessing_args])
 
 l = 224
 
@@ -74,6 +27,7 @@ if __name__ == '__main__':
     #this has to be done because of how stupidly learner() takes its arguments
     learner_path = Path(args.learner)
     learn = fastai.basic_train.load_learner(path = learner_path.parent, file = learner_path.name)
+    learn.to_fp32()
 
     os.makedirs(args.temp_dir, exist_ok=True)
     if args.keep_temp:
