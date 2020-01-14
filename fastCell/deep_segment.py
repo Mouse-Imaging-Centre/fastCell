@@ -27,7 +27,7 @@ if __name__ == '__main__':
     #this has to be done because of how stupidly learner() takes its arguments
     learner_path = Path(args.learner)
     learn = fastai.basic_train.load_learner(path = learner_path.parent, file = learner_path.name)
-    learn.to_fp32()
+    if args.fp32: learn.to_fp32()
 
     os.makedirs(args.temp_dir, exist_ok=True)
     if args.keep_temp:

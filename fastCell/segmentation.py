@@ -6,5 +6,6 @@ def add_segmentation_group(master_parser: argparse.ArgumentParser) -> None:
                                      help = "Load the Learner object that was saved from export().")
     segmentation_group.add_argument("--use-cuda", dest="use_cuda", action="store_true", default=False,
                                      help = "Load the Learner object on the gpu instead of the cpu.")
-    segmentation_group.add_argument("--fp16", dest="fp16", action="store_true", default=False,
-                                     help = "Put the learner in FP16 precision mode.")
+    segmentation_group.add_argument("--fp32", dest="fp32", action="store_true", default=True,
+                                     help = "Put the learner in FP32 precision mode. "
+                                            "You may need this if your weights are half-precision.")
