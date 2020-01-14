@@ -28,6 +28,6 @@ setuptools.setup(
         'pandas>=0.25',
         'fastai==1.0.59',
         'torch==1.2.0',
-        'torchvision=0.4.0'
+        'torchvision==0.4.0'
     ]
 )
