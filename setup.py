@@ -27,7 +27,7 @@ setuptools.setup(
         'opencv-python==4.2.0.32',
         'pandas>=0.25',
         'fastai==1.0.59',
-        'torch==1.2.0',
+        'torch==2.2.0',
         'torchvision==0.4.0'
     ]
 )
